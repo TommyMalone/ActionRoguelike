@@ -2,6 +2,8 @@
 
 
 #include "TLCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 ATLCharacter::ATLCharacter()
@@ -9,6 +11,11 @@ ATLCharacter::ATLCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
+	SpringArmComp->SetupAttachment(RootComponent);
+
+	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
+	CameraComp->SetupAttachment(SpringArmComp);
 }
 
 // Called when the game starts or when spawned
@@ -16,6 +23,16 @@ void ATLCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ATLCharacter::MoveForward(float Value)
+{
+	AddMovementInput(GetActorForwardVector(), Value);
+}
+
+void ATLCharacter::MoveRight(float Value)
+{
+	AddMovementInput(GetActorRightVector(), Value);
 }
 
 // Called every frame
@@ -30,5 +47,9 @@ void ATLCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis("MoveForward", this, &ATLCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ATLCharacter::MoveRight);
+
+	PlayerInputComponent->BindAxis("Turn", this, &ATLCharacter::AddControllerYawInput);
 }
 

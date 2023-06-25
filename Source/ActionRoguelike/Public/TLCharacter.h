@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "TLCharacter.generated.h"
 
+class UInputMappingContext;
+class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 
@@ -19,6 +22,17 @@ public:
 	ATLCharacter();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* PlayerMovementContext;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* MoveHorizontalAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* MoveForwardAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* MoveRightAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* LookAction;
+
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
@@ -28,8 +42,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void MoveForward(float Value);
-	void MoveRight(float Value);
+	void MoveHorizontal(const FInputActionValue& Value);
+	void MoveForward(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+
 
 public:	
 	// Called every frame

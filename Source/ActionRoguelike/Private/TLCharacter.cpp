@@ -81,6 +81,21 @@ void ATLCharacter::Look(const FInputActionValue& Value)
 
 }
 
+void ATLCharacter::PrimaryAttack()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FTransform SpawnTM = FTransform(GetControlRotation() , HandLocation);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+
+}
+
+void ATLCharacter::Jump()
+{
+	ACharacter::Jump();
+}
+
 // Called every frame
 void ATLCharacter::Tick(float DeltaTime)
 {
@@ -100,6 +115,8 @@ void ATLCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedPlayerInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATLCharacter::MoveForward);
 		EnhancedPlayerInputComponent->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ATLCharacter::MoveRight);
 		EnhancedPlayerInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATLCharacter::Look);
+		EnhancedPlayerInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Triggered, this, &ATLCharacter::PrimaryAttack);
+		EnhancedPlayerInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ATLCharacter::Jump);
 	}
 }
 

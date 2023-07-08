@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include <Math/MathFwd.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include "TLInteractionComponent.h"
 
 // Sets default values
 ATLCharacter::ATLCharacter()
@@ -21,6 +22,8 @@ ATLCharacter::ATLCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	InteractionComp = CreateDefaultSubobject<UTLInteractionComponent>("InteractionComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -81,14 +84,24 @@ void ATLCharacter::Look(const FInputActionValue& Value)
 
 }
 
+void ATLCharacter::PrimaryInteract()
+{
+	InteractionComp->PrimaryInteract();
+}
+
 void ATLCharacter::PrimaryAttack()
 {
+	PlayAnimMontage(AttackAnim);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ATLCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+}
+
+void ATLCharacter::PrimaryAttack_TimeElapsed()
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTM = FTransform(GetControlRotation() , HandLocation);
+	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
-
 }
 
 void ATLCharacter::Jump()
@@ -115,6 +128,7 @@ void ATLCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedPlayerInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATLCharacter::MoveForward);
 		EnhancedPlayerInputComponent->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ATLCharacter::MoveRight);
 		EnhancedPlayerInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATLCharacter::Look);
+		EnhancedPlayerInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Triggered, this, &ATLCharacter::PrimaryInteract);
 		EnhancedPlayerInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Triggered, this, &ATLCharacter::PrimaryAttack);
 		EnhancedPlayerInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ATLCharacter::Jump);
 	}

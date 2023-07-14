@@ -42,6 +42,11 @@ void ATLExplosiveProp::PostInitializeComponents()
 
 void ATLExplosiveProp::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	Explode();
+}
+
+void ATLExplosiveProp::Explode()
+{
 	RadialForceComp->FireImpulse();
 }
 

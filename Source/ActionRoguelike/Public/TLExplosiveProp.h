@@ -33,7 +33,8 @@ protected:
 
 	UFUNCTION()
     void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
+	UFUNCTION(BlueprintCallable)
+	void Explode();
 
 public:	
 	// Called every frame

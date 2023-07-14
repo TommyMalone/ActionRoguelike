@@ -33,6 +33,6 @@ void ATLItemChest::Tick(float DeltaTime)
 
 void ATLItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
-	LidMesh->SetRelativeRotation(FRotator(TargetPitch, 0, 0));
+	bIsOpen = !bIsOpen;
 }
 
